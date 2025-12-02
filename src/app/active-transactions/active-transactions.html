@@ -1,0 +1,160 @@
+<div class="container">
+  <h2>Active Transactions Demo</h2>
+
+  <p class="subtitle">
+    Concepts in this demo:
+    <span class="tag">Signals</span>
+    <span class="tag">Change Detection</span>
+    <span class="tag">AsyncPipe</span>
+    <span class="tag">BehaviorSubject</span>
+    <span class="tag">Observables</span>
+    <span class="tag">tap (RxJS)</span>
+    <span class="tag">map (RxJS)</span>
+  </p>
+
+  <div class="controls">
+    <div class="control-block">
+      <label>
+        <span class="label-title">Company selector</span>
+        <span class="label-note">
+          Updates <strong>selectedCompany$</strong> (BehaviorSubject)
+          → feeds into Observable chains.
+        </span>
+
+        <select (change)="onCompanyChange($event)">
+          <option value="">All</option>
+          @for (c of companies$ | async; track c.id) {
+            <option [value]="c.id">
+              {{ c.name }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <p class="chip-row">
+        <span class="chip">BehaviorSubject</span>
+        <span class="chip">Observables</span>
+        <span class="chip">tap()</span>
+      </p>
+    </div>
+
+    <div class="control-block">
+      <button (click)="reloadActive()">Reload Active Transactions</button>
+
+      <div class="label-note small">
+        Calls a <strong>signal</strong> (<code>reloadCount</code>) + emits on
+        <code>activeReload$</code>.
+      </div>
+
+      <p class="chip-row">
+        <span class="chip">Signals</span>
+        <span class="chip">Change Detection</span>
+        <span class="chip">Observables</span>
+      </p>
+    </div>
+  </div>
+
+  @if (listLoading()) {
+    <div class="info info--loading">
+      <strong>Loading...</strong>
+      <p>This screen is visible for the duration of the artificial delay(3000).</p>
+
+      <p class="chip-row">
+        <span class="chip">Signals</span>
+        <span class="chip">Change Detection</span>
+        <span class="chip">Observables</span>
+        <span class="chip">finalize()</span>
+        <span class="chip">delay()</span>
+        <span class="chip">AsyncPipe</span>
+      </p>
+    </div>
+  }
+
+
+
+  <div class="wrapper">
+    <!-- CUSTOMERS -->
+    <div class="component-wrapper">
+      <div class="component-header">
+        <h3>Drivers (customers$)</h3>
+      </div>
+
+      <p class="note">
+        <code>customers$</code> uses <strong>map()</strong>
+        to filter by selected company.
+      </p>
+
+      <ul>
+        @for (d of (customers$ | async); track d.id) {
+          <li>
+            {{ d.id }} - {{ d.name }} (companyId: {{ d.companyId }})
+          </li>
+        }
+      </ul>
+
+      <p class="chip-row">
+        <span class="chip">Observables</span>
+        <span class="chip">AsyncPipe</span>
+        <span class="chip">map()</span>
+      </p>
+    </div>
+
+    <!-- ACTIVE TRANSACTIONS -->
+    <div class="component-wrapper">
+      <div class="component-header">
+        <h3>Active Transactions</h3>
+      </div>
+
+      <p class="note">
+        <code>activeTransactions$</code> =
+        combineLatest(company$, reload$)
+        → switchMap()
+        → artificial delay(3000)
+        → finalize() hides loader
+      </p>
+
+      <ul>
+        @for (tx of (activeTransactions$ | async); track tx.id) {
+          <li>
+            ID: {{ tx.id }},
+            Driver: {{ tx.driverId }},
+            City: {{ tx.cityId }},
+            Started: {{ tx.startedAt | date:'short' }}
+          </li>
+        }
+      </ul>
+
+      <p class="chip-row">
+        <span class="chip">Observables</span>
+        <span class="chip">AsyncPipe</span>
+        <span class="chip">tap()</span>
+        <span class="chip">map()</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="debug-panel">
+    <h3>Live State</h3>
+
+    <p>
+      <strong>Signal reloadCount()</strong>: {{ reloadCount() }}
+    </p>
+
+    <p>
+      <strong>selectedCompany$</strong> =
+      {{ companiesService.selectedCompany$ | async }}
+    </p>
+
+    <p>
+      <strong>listLoading()</strong> =
+      {{ listLoading() }}
+    </p>
+
+  <p class="chip-row">
+    <span class="chip">Signals</span>
+    <span class="chip">Change Detection</span>
+    <span class="chip">AsyncPipe</span>
+    <span class="chip">BehaviorSubject</span>
+    <span class="chip">Observables</span>
+  </p>
+

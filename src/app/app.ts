@@ -1,9 +1,12 @@
+
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ActiveTransactions } from './active-transactions/active-transactions';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, ActiveTransactions],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
